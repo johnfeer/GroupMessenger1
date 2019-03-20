@@ -32,14 +32,19 @@ import java.net.UnknownHostException;
  *
  */
 public class GroupMessengerActivity extends Activity {
+    /*
+     * Begin John Feerick code
+     */
     static final String TAG = GroupMessengerActivity.class.getSimpleName();
     static final String[] REMOTE_PORTS = {"11108","11112","11116","11120","11124"};
     static final int SERVER_PORT = 10000;
     private static int msgCount = 0;
+    /*
+     * End John Feerick code
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "ARE WE THERE YET");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_messenger);
 
@@ -47,8 +52,14 @@ public class GroupMessengerActivity extends Activity {
          * TODO: Use the TextView to display your messages. Though there is no grading component
          * on how you display the messages, if you implement it, it'll make your debugging easier.
          */
+        /*
+         * Begin John Feerick code
+         */
         TextView tv = (TextView) findViewById(R.id.textView1);
         tv.setMovementMethod(new ScrollingMovementMethod());
+        /*
+         * End John Feerick code
+         */
 
         /*
          * Calculate the port number that this AVD listens on.
@@ -96,6 +107,10 @@ public class GroupMessengerActivity extends Activity {
          * In your implementation you need to get the message from the input box (EditText)
          * and send it to other AVDs.
          */
+
+        /*
+         * Begin John Feerick code
+         */
 //        The following code was taken partially from PA1 and this website:
 //        https://stackoverflow.com/questions/30082892/best-way-to-implement-view-onclicklistener-in-android
 
@@ -110,10 +125,9 @@ public class GroupMessengerActivity extends Activity {
                         new ClientTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, msg, myPort);
                     }
                 });
-//        TextView localTextView = (TextView) findViewById(R.id.local_text_display);
-//        localTextView.append("\t" + msg); // This is one way to display a string.
-//        TextView remoteTextView = (TextView) findViewById(R.id.remote_text_display);
-//        remoteTextView.append("\n");
+        /*
+         * End John Feerick code
+         */
 
         /*
          * Note that the following AsyncTask uses AsyncTask.SERIAL_EXECUTOR, not
@@ -134,6 +148,10 @@ public class GroupMessengerActivity extends Activity {
              * TODO: Fill in your server code that receives messages and passes them
              * to onProgressUpdate().
              */
+
+            /*
+             * Begin John Feerick code
+             */
             while(true) {
                 try {
                     /*
@@ -141,9 +159,8 @@ public class GroupMessengerActivity extends Activity {
                      * https://docs.oracle.com/javase/tutorial/networking/sockets/readingWriting.html
                      */
                     ServerSocket serverSocket = sockets[0];
-                    Log.i(TAG, "ARE WE HERE");
                     Socket clisco = serverSocket.accept();
-                    //declare new input streeam as variable, get servers output stream same as client side
+                    //declare new input stream as variable, get servers output stream same as client side
                     String msg;
 
 
@@ -151,13 +168,10 @@ public class GroupMessengerActivity extends Activity {
                     BufferedReader in = new BufferedReader(inStream);
 
                     msg = in.readLine();
-                    Log.i(TAG, "MAYBE HERE");
                     if(msg == null){
-                        //clisco.close();
-                        Log.i(TAG, "riprip");
+                        Log.i(TAG, "rip");
                        continue;
                     }
-                    Log.i(TAG, "MAYBE HERE 2");
                     ContentValues cv = new ContentValues();
                     cv.put("key", String.valueOf(msgCount));
                     msgCount++;
@@ -173,9 +187,11 @@ public class GroupMessengerActivity extends Activity {
                     clisco.close();
                 } catch (IOException e) {
                     Log.e(TAG, "ServerTask socket IOException:" + e.getMessage());
-                    //e.printStackTrace();
                 }
             }
+            /*
+             * End John Feerick code
+             */
             //return null;
         }
 
@@ -183,8 +199,11 @@ public class GroupMessengerActivity extends Activity {
             /*
              * The following code displays what is received in doInBackground().
              */
-            Log.i(TAG, "Progress update");
+
             /*
+             * Begin John Feerick code
+             *
+             *
              * The following code was obtained from the top reponse at https://stackoverflow.com/questions/
              * 5161951/android-only-the-original-thread-that-created-a-view-hierarchy-can-touch-its-vi
              */
@@ -195,33 +214,13 @@ public class GroupMessengerActivity extends Activity {
                     Log.i(TAG, "STR RECEIVED" + strReceived);
                     TextView remoteTextView = (TextView) findViewById(R.id.textView1);
                     remoteTextView.append(strReceived + "\t\n");
-//                    TextView localTextView = (TextView) findViewById(R.id.local_text_display);
-//                    localTextView.append("\n");
 
-
-
-                    /*
-                     * The following code creates a file in the AVD's internal storage and stores a file.
-                     *
-                     * For more information on file I/O on Android, please take a look at
-                     * http://developer.android.com/training/basics/data-storage/files.html
-                     */
-
-//                    String filename = "SimpleMessengerOutput";
-//                    String string = strReceived + "\n";
-//                    FileOutputStream outputStream;
-
-//                    try {
-//                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-//                        outputStream.write(string.getBytes());
-//                        outputStream.close();
-//                    } catch (Exception e) {
-//                        Log.e(TAG, "File write failed");
-//                    }
                 }
             });
 
-
+            /*
+             * End John Feerick code
+             */
             return;
         }
     }
@@ -229,10 +228,15 @@ public class GroupMessengerActivity extends Activity {
 
         @Override
         protected Void doInBackground(String... msgs) {
+            /*
+             * Begin John Feerick code
+             */
             try {
                 for(int i = 0; i < 5; i++) {
 
-
+                    /*
+                     * End John Feerick code
+                     */
                     String remotePort = REMOTE_PORTS[i];
 
                     Socket socket = new Socket(InetAddress.getByAddress(new byte[]{10, 0, 2, 2}),
@@ -241,23 +245,20 @@ public class GroupMessengerActivity extends Activity {
                     String msgToSend = msgs[0];
                     /*
                      * TODO: Fill in your client code that sends out a message.
+                     *
+                     *
+                     * Begin John Feerick code
                      */
-//                    Log.e(TAG, "WTF");
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                  //  Log.e(TAG, "out problem");
-
-                    //BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    //Log.e(TAG, "in problem");
-
-
                     out.println(msgToSend);
                     in.readLine();
                     out.close();
                     in.close();
-                  //  Log.e(TAG, "ClientTask msg sent:" + msgToSend);
-                   // in.readLine();
                     socket.close();
+                    /*
+                     * End John Feerick code
+                     */
                 }
             } catch (UnknownHostException e) {
                 Log.e(TAG, "ClientTask UnknownHostException");
